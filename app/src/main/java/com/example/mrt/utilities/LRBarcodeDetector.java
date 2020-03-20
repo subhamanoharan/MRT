@@ -3,6 +3,7 @@ package com.example.mrt.utilities;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.example.mrt.R;
@@ -19,13 +20,14 @@ public class LRBarcodeDetector {
     public String detectLRNo(){
         String barcode = "";
         try {
-            Bitmap barcodeBitmap = BitmapFactory.decodeResource(ctx.getApplicationContext().getResources(), R.drawable.image_with_bc);
+            Bitmap barcodeBitmap = BitmapFactory.decodeResource(ctx.getApplicationContext().getResources(), R.drawable.demoz);
             BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(ctx.getApplicationContext()).build();
 
             Frame frame = new Frame.Builder().setBitmap(barcodeBitmap).build();
             SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
             barcode = barcodes.size() != 0 ? barcodes.valueAt(0).rawValue : "";
         } catch (Exception e) {
+            Log.e("-------", "-----------------------------------");
             e.printStackTrace();
         }
         return barcode;

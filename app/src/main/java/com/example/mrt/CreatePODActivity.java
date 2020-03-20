@@ -29,13 +29,15 @@ import java.util.Date;
 
 public class CreatePODActivity extends AppCompatActivity {
 
+    String currentPhotoPath;
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pod);
     }
-
-    String currentPhotoPath;
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -52,7 +54,6 @@ public class CreatePODActivity extends AppCompatActivity {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-    static final int REQUEST_TAKE_PHOTO = 1;
 
     public void dispatchTakePictureIntent(View v) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -68,62 +69,28 @@ public class CreatePODActivity extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Log.i("-------", photoFile.getAbsolutePath());
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.mrt",
-                        photoFile);
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.mrt", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         final ImageView barcodeImgView = findViewById(R.id.image);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            scanBarCodeF(imageBitmap);
+            scanBarCode();
             barcodeImgView.setImageBitmap(imageBitmap);
-
         }
     }
 
-    public void scanBarCode(View view) {
-        final TextView barcodeTextView = findViewById(R.id.barcode_content);
-        String lrNO = detectLRNo();
-            if (!lrNO.isEmpty()) {
-                barcodeTextView.setText("CODE Data: " + lrNO);
-            } else {
-                barcodeTextView.setText("No Code found!");
-                barcodeTextView.setTextColor(Color.RED);
-            }
-    }
-
-    public String detectLRNo(){
-        final ImageView barcodeImgView = findViewById(R.id.image);
-        String barcode = "";
-        try {
-            Bitmap barcodeBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.podc);
-            BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext())
-                    .build();
-
-            Frame frame = new Frame.Builder().setBitmap(barcodeBitmap).build();
-            SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
-            barcode = barcodes.size() != 0 ? barcodes.valueAt(0).rawValue : "";
-            barcodeImgView.setImageBitmap(barcodeBitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        return barcode;
-    }
-
-    public void scanBarCodeF(Bitmap b) {
+    public void scanBarCode() {
         final TextView barcodeTextView = findViewById(R.id.barcode_content);
         final Bitmap bitmapBig = BitmapFactory.decodeFile(currentPhotoPath);
-        String lrNO = detectLRNoF(bitmapBig);
+        String lrNO = detectLRNo(bitmapBig);
         if (!lrNO.isEmpty()) {
             barcodeTextView.setText("CODE Data: " + lrNO);
         } else {
@@ -133,20 +100,16 @@ public class CreatePODActivity extends AppCompatActivity {
     }
 
 
-    public String detectLRNoF(Bitmap barcodeBitmap){
+    public String detectLRNo(Bitmap barcodeBitmap){
         String barcode = "";
         try {
-            BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext())
-                    .build();
-
+            BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();
             Frame frame = new Frame.Builder().setBitmap(barcodeBitmap).build();
             SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
             barcode = barcodes.size() != 0 ? barcodes.valueAt(0).rawValue : "";
         } catch (Exception e) {
             e.printStackTrace();
-
         }
         return barcode;
     }
-
 }

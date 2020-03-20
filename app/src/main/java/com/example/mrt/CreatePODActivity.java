@@ -39,23 +39,7 @@ public class CreatePODActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_pod);
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    public void dispatchTakePictureIntent(View v) {
+    public void onScan(View v) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -87,20 +71,37 @@ public class CreatePODActivity extends AppCompatActivity {
         }
     }
 
-    public void scanBarCode() {
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void scanBarCode() {
         final TextView barcodeTextView = findViewById(R.id.barcode_content);
-        final Bitmap bitmapBig = BitmapFactory.decodeFile(currentPhotoPath);
-        String lrNO = detectLRNo(bitmapBig);
+        final TextView barcodeErrorView = findViewById(R.id.scan_error);
+        String lrNO = detectLRNo();
         if (!lrNO.isEmpty()) {
-            barcodeTextView.setText("CODE Data: " + lrNO);
+            barcodeTextView.setText(lrNO);
+            barcodeErrorView.setVisibility(View.INVISIBLE);
         } else {
-            barcodeTextView.setText("No Code found!");
-            barcodeTextView.setTextColor(Color.RED);
+            barcodeErrorView.setVisibility(View.VISIBLE);
         }
     }
 
 
-    public String detectLRNo(Bitmap barcodeBitmap){
+    private String detectLRNo(){
+        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPhotoPath);
         String barcode = "";
         try {
             BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();

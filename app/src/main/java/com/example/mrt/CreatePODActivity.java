@@ -3,7 +3,6 @@ package com.example.mrt;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,12 +10,16 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.example.mrt.services.api.ImageUploadService;
+import com.example.mrt.services.api.ServiceGenerator;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -25,6 +28,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class CreatePODActivity extends AppCompatActivity {
@@ -90,12 +101,15 @@ public class CreatePODActivity extends AppCompatActivity {
     private void scanBarCode() {
         final TextView barcodeTextView = findViewById(R.id.barcode_content);
         final TextView barcodeErrorView = findViewById(R.id.scan_error);
+        final Button uploadBtn = findViewById(R.id.upload_button);
         String lrNO = detectLRNo();
         if (!lrNO.isEmpty()) {
             barcodeTextView.setText(lrNO);
             barcodeErrorView.setVisibility(View.INVISIBLE);
+            uploadBtn.setEnabled(true);
         } else {
             barcodeErrorView.setVisibility(View.VISIBLE);
+            uploadBtn.setEnabled(false);
         }
     }
 
@@ -112,5 +126,37 @@ public class CreatePODActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return barcode;
+    }
+
+    public void onUpload(View view) {
+        uploadFile(currentPhotoPath);
+    }
+
+    private void uploadFile(String filePath) {
+        ImageUploadService service = ServiceGenerator.createService(ImageUploadService.class);
+        File file = new File(filePath);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("Image/jpg"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+        Call<ResponseBody> call = service.upload(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                onUploadSuccess();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                onUploadFailure();
+            }
+        });
+    }
+
+    private void onUploadFailure() {
+        Toast.makeText(this, R.string.upload, Toast.LENGTH_LONG).show();
+    }
+
+    private void onUploadSuccess() {
+        Toast.makeText(this, R.string.upload_success, Toast.LENGTH_LONG).show();
+        recreate();
     }
 }

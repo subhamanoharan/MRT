@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MRT</string>
     <string name="scan_error_message">No code found.Please scan again!</string>
+    <string name="upload">Upload</string>
+    <string name="upload_failed">Upload failed!</string>
+    <string name="upload_success">"Uploaded successfully!"</string>
 </resources>

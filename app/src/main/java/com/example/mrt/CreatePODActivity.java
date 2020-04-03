@@ -104,10 +104,12 @@ public class CreatePODActivity extends AppCompatActivity {
         final Button uploadBtn = findViewById(R.id.upload_button);
         String lrNO = detectLRNo();
         if (!lrNO.isEmpty()) {
+            barcodeTextView.setVisibility(View.VISIBLE);
             barcodeTextView.setText(lrNO);
             barcodeErrorView.setVisibility(View.INVISIBLE);
             uploadBtn.setEnabled(true);
         } else {
+            barcodeTextView.setVisibility(View.INVISIBLE);
             barcodeErrorView.setVisibility(View.VISIBLE);
             uploadBtn.setEnabled(false);
         }
@@ -115,7 +117,10 @@ public class CreatePODActivity extends AppCompatActivity {
 
 
     private String detectLRNo(){
-        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPhotoPath);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
         String barcode = "";
         try {
             BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();

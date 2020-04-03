@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -18,29 +17,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import com.example.mrt.services.api.ImageUploadService;
-import com.example.mrt.services.api.ServiceGenerator;
+import com.example.mrt.models.POD;
+import com.example.mrt.services.ImageUploadCb;
+import com.example.mrt.services.PODFileManager;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
-public class CreatePODActivity extends AppCompatActivity {
+public class CreatePODActivity extends AppCompatActivity implements ImageUploadCb{
 
-    String currentPhotoPath;
+    POD currentPod;
 
     static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -48,27 +37,6 @@ public class CreatePODActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pod);
-    }
-
-    public void onScan(View v) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.e("---------", ex.getLocalizedMessage());
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.mrt", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
     }
 
     @Override
@@ -82,45 +50,39 @@ public class CreatePODActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+    public void onScan(View v) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            final File imageFile = PODFileManager.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            if (imageFile != null) {
+                currentPod = new POD(imageFile.getAbsolutePath());
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.mrt", imageFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            } else
+                showScanFailure(R.string.camera_capture_failure);
+        } else
+            showScanFailure(R.string.camera_capture_failure);
+    }
 
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
+    public void onUpload(View view) {
+        PODFileManager.uploadImageFile(currentPod, this);
     }
 
     private void scanBarCode() {
-        final TextView barcodeTextView = findViewById(R.id.barcode_content);
-        final TextView barcodeErrorView = findViewById(R.id.scan_error);
-        final Button uploadBtn = findViewById(R.id.upload_button);
         String lrNO = detectLRNo();
         if (!lrNO.isEmpty()) {
-            barcodeTextView.setVisibility(View.VISIBLE);
-            barcodeTextView.setText(lrNO);
-            barcodeErrorView.setVisibility(View.INVISIBLE);
-            uploadBtn.setEnabled(true);
+            currentPod.setLRNo(lrNO);
+            showScanSuccess(lrNO);
         } else {
-            barcodeTextView.setVisibility(View.INVISIBLE);
-            barcodeErrorView.setVisibility(View.VISIBLE);
-            uploadBtn.setEnabled(false);
+            showScanFailure(R.string.scan_error_message);
         }
     }
 
-
     private String detectLRNo(){
-
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 4;
-        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
+        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPod.getImageFilePath(), options);
         String barcode = "";
         try {
             BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();
@@ -133,35 +95,34 @@ public class CreatePODActivity extends AppCompatActivity {
         return barcode;
     }
 
-    public void onUpload(View view) {
-        uploadFile(currentPhotoPath);
+    private void showScanSuccess(String lrNO) {
+        final TextView barcodeTextView = findViewById(R.id.barcode_content);
+        final TextView barcodeErrorView = findViewById(R.id.scan_error);
+        final Button uploadBtn = findViewById(R.id.upload_button);
+        barcodeTextView.setVisibility(View.VISIBLE);
+        barcodeTextView.setText(lrNO);
+        barcodeErrorView.setVisibility(View.INVISIBLE);
+        uploadBtn.setEnabled(true);
     }
 
-    private void uploadFile(String filePath) {
-        ImageUploadService service = ServiceGenerator.createService(ImageUploadService.class);
-        File file = new File(filePath);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("Image/jpg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-        Call<ResponseBody> call = service.upload(body);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                onUploadSuccess();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                onUploadFailure();
-            }
-        });
+    private void showScanFailure(int errorMsgResId) {
+        final TextView barcodeTextView = findViewById(R.id.barcode_content);
+        final TextView barcodeErrorView = findViewById(R.id.scan_error);
+        final Button uploadBtn = findViewById(R.id.upload_button);
+        barcodeTextView.setVisibility(View.INVISIBLE);
+        barcodeErrorView.setVisibility(View.VISIBLE);
+        barcodeErrorView.setText(errorMsgResId);
+        uploadBtn.setEnabled(false);
     }
 
-    private void onUploadFailure() {
-        Toast.makeText(this, R.string.upload, Toast.LENGTH_LONG).show();
-    }
-
-    private void onUploadSuccess() {
+    @Override
+    public void onUploadSuccess() {
         Toast.makeText(this, R.string.upload_success, Toast.LENGTH_LONG).show();
         recreate();
+    }
+
+    @Override
+    public void onUploadFailure() {
+        Toast.makeText(this, R.string.upload_failed, Toast.LENGTH_LONG).show();
     }
 }

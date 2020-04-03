@@ -4,4 +4,5 @@
     <string name="upload">Upload</string>
     <string name="upload_failed">Upload failed!</string>
     <string name="upload_success">"Uploaded successfully!"</string>
+    <string name="camera_capture_failure">Unable to take picture!</string>
 </resources>

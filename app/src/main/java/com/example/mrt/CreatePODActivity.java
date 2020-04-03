@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +53,7 @@ public class CreatePODActivity extends AppCompatActivity implements ImageUploadC
 
     public void onScan(View v) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(currentPod != null) clearExistingPOD();
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             final File imageFile = PODFileManager.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES));
             if (imageFile != null) {
@@ -63,6 +65,11 @@ public class CreatePODActivity extends AppCompatActivity implements ImageUploadC
                 showScanFailure(R.string.camera_capture_failure);
         } else
             showScanFailure(R.string.camera_capture_failure);
+    }
+
+    private void clearExistingPOD() {
+        PODFileManager.deleteImageFile(currentPod.getImageFilePath());
+        currentPod = null;
     }
 
     public void onUpload(View view) {
@@ -118,6 +125,7 @@ public class CreatePODActivity extends AppCompatActivity implements ImageUploadC
     @Override
     public void onUploadSuccess() {
         Toast.makeText(this, R.string.upload_success, Toast.LENGTH_LONG).show();
+        clearExistingPOD();
         recreate();
     }
 

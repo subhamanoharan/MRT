@@ -51,4 +51,7 @@ public class PODFileManager {
         });
     }
 
+    public static void deleteImageFile(String imageFilePath) {
+        new File(imageFilePath).delete();
+    }
 }

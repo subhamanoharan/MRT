@@ -1,6 +1,8 @@
 package com.example.mrt;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -22,5 +24,9 @@ public class ListActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+    }
+
+    public void onAddPOD(View view) {
+        startActivity(new Intent(this, CreatePODActivity.class));
     }
 }

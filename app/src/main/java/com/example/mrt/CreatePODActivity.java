@@ -1,6 +1,5 @@
 package com.example.mrt;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +19,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.example.mrt.models.POD;
-import com.example.mrt.services.ImageUploadCb;
 import com.example.mrt.services.PODFileManager;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -34,6 +32,8 @@ public class CreatePODActivity extends AppCompatActivity {
     POD currentPod;
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    public static final String LR_NO_EXTRA = "LR_NO";
+    public static final String IMAGE_FILE_PATH_EXTRA = "IMAGE_FILE_PATH";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,22 +88,11 @@ public class CreatePODActivity extends AppCompatActivity {
     }
 
     public void onUpload(View view) {
-        final ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-        ImageUploadCb imageUploadCb = new ImageUploadCb() {
-            @Override
-            public void onUploadSuccess() {
-                progressDialog.dismiss();
-                onPODUploadSuccess();
-            }
-
-            @Override
-            public void onUploadFailure() {
-                progressDialog.dismiss();
-                onPODUploadFailure();
-            }
-        };
-        PODFileManager.uploadImageFile(currentPod, imageUploadCb);
+        final Intent data = new Intent();
+        data.putExtra(LR_NO_EXTRA, currentPod.getLrNo());
+        data.putExtra(IMAGE_FILE_PATH_EXTRA, currentPod.getImageFilePath());
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     private void scanBarCode() {

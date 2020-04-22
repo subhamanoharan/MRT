@@ -7,11 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-class PODArrayAdapter extends ArrayAdapter<String> {
-    private final Context context;
-    private final String[] values;
+import com.example.mrt.models.POD;
 
-    public PODArrayAdapter(Context context, String[] values) {
+import java.util.ArrayList;
+
+class PODArrayAdapter extends ArrayAdapter<POD> {
+    private final Context context;
+    private final ArrayList<POD> values;
+
+    public PODArrayAdapter(Context context, ArrayList<POD> values) {
         super(context, R.layout.pod_list_item, values);
         this.context = context;
         this.values = values;
@@ -21,7 +25,7 @@ class PODArrayAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.pod_list_item, parent, false);
         TextView textView = rowView.findViewById(R.id.pod_lr_no);
-        textView.setText(values[position]);
+        textView.setText(values.get(position).getLrNo());
         return rowView;
     }
 }

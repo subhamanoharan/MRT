@@ -46,6 +46,7 @@ public class PODFileManager {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i("----CALL FAILED", t.getMessage());
                 imageUploadCb.onUploadFailure();
             }
         });

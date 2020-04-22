@@ -8,6 +8,11 @@ public class POD {
         this.imageFilePath = imageFilePath;
     }
 
+    public POD(String imageFilePath, String lrNo) {
+        this.imageFilePath = imageFilePath;
+        this.lrNo = lrNo;
+    }
+
     public String getImageFilePath() {
         return imageFilePath;
     }

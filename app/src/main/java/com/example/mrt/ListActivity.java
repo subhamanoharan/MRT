@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.mrt.models.POD;
+import com.example.mrt.models.PODList;
 import com.example.mrt.models.PODListViewModel;
 
 import java.util.ArrayList;
@@ -30,17 +31,14 @@ public class ListActivity extends AppCompatActivity {
         podViewModel = ViewModelProviders.of(this).get(PODListViewModel.class);
 
         final ListView listView = findViewById(R.id.pod_list);
-        final ArrayList<POD> value = podViewModel.getPOD().getValue();
-        final ArrayAdapter<POD> adapter = new PODArrayAdapter(this, value);
+        final ArrayAdapter<POD> adapter = new PODArrayAdapter(this, new ArrayList<POD>());
         listView.setAdapter(adapter);
-        Log.i("---", "LIST CREATE" + value);
 
-        Observer<ArrayList<POD>> observer = new Observer<ArrayList<POD>>() {
+        Observer<PODList> observer = new Observer<PODList>() {
             @Override
-            public void onChanged(ArrayList<POD> pods) {
-                Log.i("---", "LIST CHANGE  " + pods);
+            public void onChanged(PODList podList) {
                 adapter.clear();
-                adapter.addAll(pods);
+                adapter.addAll(podList.getAll());
                 adapter.notifyDataSetChanged();
             }
         };

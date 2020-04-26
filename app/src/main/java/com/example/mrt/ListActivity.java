@@ -56,9 +56,12 @@ public class ListActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        final String lrNo = data.getStringExtra(CreatePODActivity.LR_NO_EXTRA);
-        final String imageFilePath = data.getStringExtra(CreatePODActivity.IMAGE_FILE_PATH_EXTRA);
-        final POD pod = new POD(imageFilePath, lrNo, UploadStatus.WAITING);
-        podViewModel.add(pod);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            final String lrNo = data.getStringExtra(CreatePODActivity.LR_NO_EXTRA);
+            final String imageFilePath = data.getStringExtra(CreatePODActivity.IMAGE_FILE_PATH_EXTRA);
+            final POD pod = new POD(imageFilePath, lrNo, UploadStatus.WAITING);
+            podViewModel.add(pod);
+        }
     }
 }

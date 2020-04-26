@@ -12,7 +12,7 @@ public class PODList {
     private ArrayList<POD> deepCopy(){
         ArrayList<POD> newList = new ArrayList<>();
         for(POD p : pods) {
-            newList.add(new POD(p.getImageFilePath(), p.getLrNo()));
+            newList.add(new POD(p.getImageFilePath(), p.getLrNo(), p.getUploadStatus()));
         }
         return newList;
     }
@@ -27,7 +27,18 @@ public class PODList {
         ArrayList<POD> newList = new ArrayList<>();
         for(POD p : pods) {
             if(currentPod.getImageFilePath() != p.getImageFilePath())
-                newList.add(new POD(p.getImageFilePath(), p.getLrNo()));
+                newList.add(new POD(p.getImageFilePath(), p.getLrNo(), p.getUploadStatus()));
+        }
+        return new PODList(newList);
+    }
+
+    PODList update (POD currentPod) {
+        ArrayList<POD> newList = new ArrayList<>();
+        for(POD p : pods) {
+            if(currentPod.getImageFilePath() == p.getImageFilePath())
+                newList.add(new POD(currentPod.getImageFilePath(), currentPod.getLrNo(), currentPod.getUploadStatus()));
+            else
+                newList.add(p);
         }
         return new PODList(newList);
     }

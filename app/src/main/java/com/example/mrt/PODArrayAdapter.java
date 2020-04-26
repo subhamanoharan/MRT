@@ -1,13 +1,16 @@
 package com.example.mrt;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mrt.models.POD;
+import com.example.mrt.models.UploadStatus;
 
 import java.util.ArrayList;
 
@@ -24,8 +27,22 @@ class PODArrayAdapter extends ArrayAdapter<POD> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.pod_list_item, parent, false);
+        final POD pod = values.get(position);
+        final UploadStatus uploadStatus = pod.getUploadStatus();
+
         TextView textView = rowView.findViewById(R.id.pod_lr_no);
-        textView.setText(values.get(position).getLrNo());
+        final View progessIndicator = rowView.findViewById(R.id.progress);
+        final View retyrIndicator = rowView.findViewById(R.id.retry);
+        textView.setText(pod.getLrNo());
+
+        if(uploadStatus == UploadStatus.IN_PROGRESS){
+            progessIndicator.setVisibility(View.VISIBLE);
+            retyrIndicator.setVisibility(View.GONE);
+        } else if(uploadStatus == UploadStatus.FAILURE){
+            Toast.makeText(this.context, "Failed to upload " + pod.getLrNo(), Toast.LENGTH_LONG).show();
+            progessIndicator.setVisibility(View.GONE);
+            retyrIndicator.setVisibility(View.VISIBLE);
+        }
         return rowView;
     }
 }

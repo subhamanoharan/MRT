@@ -22,16 +22,19 @@ public class PODListViewModel extends ViewModel {
 
 
     public void add(final POD currentPod) {
+        currentPod.setUploadStatus(UploadStatus.IN_PROGRESS);
         podList.setValue(podList.getValue().add(currentPod));
         ImageUploadCb imageUploadCb = new ImageUploadCb() {
             @Override
             public void onUploadSuccess() {
+                currentPod.setUploadStatus(UploadStatus.SUCCESS);
                 podList.setValue(podList.getValue().remove(currentPod));
             }
 
             @Override
             public void onUploadFailure() {
-                Log.i("---", "Failed to upload" + currentPod.getLrNo());
+                currentPod.setUploadStatus(UploadStatus.FAILURE);
+                podList.setValue(podList.getValue().update(currentPod));
             }
         };
         PODFileManager.uploadImageFile(currentPod, imageUploadCb);

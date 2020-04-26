@@ -3,14 +3,16 @@ package com.example.mrt.models;
 public class POD {
     private String imageFilePath;
     private String lrNo;
+    private UploadStatus uploadStatus = UploadStatus.WAITING;
 
     public POD(String imageFilePath){
         this.imageFilePath = imageFilePath;
     }
 
-    public POD(String imageFilePath, String lrNo) {
+    public POD(String imageFilePath, String lrNo, UploadStatus uploadStatus) {
         this.imageFilePath = imageFilePath;
         this.lrNo = lrNo;
+        this.uploadStatus = uploadStatus;
     }
 
     public String getImageFilePath() {
@@ -23,5 +25,13 @@ public class POD {
 
     public String getLrNo() {
         return lrNo;
+    }
+
+    public void setUploadStatus(UploadStatus uploadStatus) {
+        this.uploadStatus = uploadStatus;
+    }
+
+    public UploadStatus getUploadStatus() {
+        return this.uploadStatus;
     }
 }

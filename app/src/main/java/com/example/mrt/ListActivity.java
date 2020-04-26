@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.mrt.models.POD;
 import com.example.mrt.models.PODList;
 import com.example.mrt.models.PODListViewModel;
+import com.example.mrt.models.UploadStatus;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class ListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         final String lrNo = data.getStringExtra(CreatePODActivity.LR_NO_EXTRA);
         final String imageFilePath = data.getStringExtra(CreatePODActivity.IMAGE_FILE_PATH_EXTRA);
-        final POD pod = new POD(imageFilePath, lrNo);
+        final POD pod = new POD(imageFilePath, lrNo, UploadStatus.WAITING);
         podViewModel.add(pod);
     }
 }

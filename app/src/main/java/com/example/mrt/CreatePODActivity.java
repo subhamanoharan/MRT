@@ -2,12 +2,11 @@ package com.example.mrt;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,10 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.example.mrt.models.POD;
+import com.example.mrt.services.LRDetectorCallback;
+import com.example.mrt.services.LRNoDetectorAsyncTask;
 import com.example.mrt.services.PODFileRepository;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.File;
 
@@ -96,29 +94,20 @@ public class CreatePODActivity extends AppCompatActivity {
     }
 
     private void scanBarCode() {
-        String lrNO = detectLRNo();
-        if (!lrNO.isEmpty()) {
-            currentPod.setLRNo(lrNO);
-            showScanSuccess(lrNO);
-        } else {
-            showScanFailure(R.string.scan_error_message);
-        }
-    }
-
-    private String detectLRNo(){
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
-        final Bitmap barcodeBitmap = BitmapFactory.decodeFile(currentPod.getImageFilePath(), options);
-        String barcode = "";
-        try {
-            BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();
-            Frame frame = new Frame.Builder().setBitmap(barcodeBitmap).build();
-            SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
-            barcode = barcodes.size() != 0 ? barcodes.valueAt(0).rawValue : "";
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return barcode;
+        final LRDetectorCallback lRDetectorCallback = new LRDetectorCallback() {
+            @Override
+            public void onScanCompletion(String lrNO) {
+                if (!lrNO.isEmpty()) {
+                    currentPod.setLRNo(lrNO);
+                    showScanSuccess(lrNO);
+                } else {
+                    showScanFailure(R.string.scan_error_message);
+                }
+            }
+        };
+        showScanInProgress();
+        new LRNoDetectorAsyncTask(getApplicationContext(), lRDetectorCallback)
+                .execute(currentPod.getImageFilePath());
     }
 
     private void showScanSuccess(String lrNO) {
@@ -138,6 +127,16 @@ public class CreatePODActivity extends AppCompatActivity {
         barcodeTextView.setVisibility(View.INVISIBLE);
         barcodeErrorView.setVisibility(View.VISIBLE);
         barcodeErrorView.setText(errorMsgResId);
+        uploadBtn.setEnabled(false);
+    }
+
+    private void showScanInProgress() {
+        final TextView barcodeTextView = findViewById(R.id.barcode_content);
+        final TextView barcodeErrorView = findViewById(R.id.scan_error);
+        final Button uploadBtn = findViewById(R.id.upload_button);
+        barcodeErrorView.setVisibility(View.INVISIBLE);
+        barcodeTextView.setVisibility(View.VISIBLE);
+        barcodeTextView.setText(R.string.scan_in_progress);
         uploadBtn.setEnabled(false);
     }
 }

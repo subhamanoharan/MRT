@@ -48,4 +48,8 @@ public class PODListViewModel extends ViewModel {
         };
         PODFileRepository.uploadImageFile(currentPod, imageUploadCb);
     }
+
+    public int getCount() {
+        return this.getPOD().getValue().pods.size();
+    }
 }

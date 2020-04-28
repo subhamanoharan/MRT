@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 
 
 public class ListActivity extends AppCompatActivity implements RetryCallback{
+    private static final int MAX_COUNT = 5;
+
     private PODListViewModel podViewModel;
     public static final int REQUEST_ADD_POD = 1;
 
@@ -49,8 +52,13 @@ public class ListActivity extends AppCompatActivity implements RetryCallback{
     }
 
     public void onAddPOD(View view) {
-        Intent uploadPODIntent = new Intent(this, CreatePODActivity.class);
-        startActivityForResult(uploadPODIntent, REQUEST_ADD_POD);
+        final int count = podViewModel.getCount();
+        if(count >= MAX_COUNT)
+            Toast.makeText(this, "Please wait for the current "+count+" items to upload.", Toast.LENGTH_LONG).show();
+        else {
+            Intent uploadPODIntent = new Intent(this, CreatePODActivity.class);
+            startActivityForResult(uploadPODIntent, REQUEST_ADD_POD);
+        }
     }
 
     @Override

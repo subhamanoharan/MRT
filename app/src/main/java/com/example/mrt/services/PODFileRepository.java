@@ -19,7 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PODFileManager {
+public class PODFileRepository {
     public static File createImageFile(File storageDirectory)  {
         File imageFile = null;
         try {

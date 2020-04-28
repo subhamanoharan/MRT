@@ -12,14 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.example.mrt.models.POD;
-import com.example.mrt.services.PODFileManager;
+import com.example.mrt.services.PODFileRepository;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -71,7 +70,7 @@ public class CreatePODActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(currentPod != null) clearExistingPOD();
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            final File imageFile = PODFileManager.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            final File imageFile = PODFileRepository.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES));
             if (imageFile != null) {
                 currentPod = new POD(imageFile.getAbsolutePath());
                 Uri photoURI = FileProvider.getUriForFile(this, "com.example.mrt", imageFile);
@@ -84,7 +83,7 @@ public class CreatePODActivity extends AppCompatActivity {
     }
 
     private void clearExistingPOD() {
-        PODFileManager.deleteImageFile(currentPod.getImageFilePath());
+        PODFileRepository.deleteImageFile(currentPod.getImageFilePath());
         currentPod = null;
     }
 
@@ -140,15 +139,5 @@ public class CreatePODActivity extends AppCompatActivity {
         barcodeErrorView.setVisibility(View.VISIBLE);
         barcodeErrorView.setText(errorMsgResId);
         uploadBtn.setEnabled(false);
-    }
-
-    private void onPODUploadSuccess() {
-        Toast.makeText(this, R.string.upload_success, Toast.LENGTH_LONG).show();
-        clearExistingPOD();
-        recreate();
-    }
-
-    private void onPODUploadFailure() {
-        Toast.makeText(this, R.string.upload_failed, Toast.LENGTH_LONG).show();
     }
 }

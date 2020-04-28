@@ -1,12 +1,10 @@
 package com.example.mrt.models;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.mrt.services.ImageUploadCb;
-import com.example.mrt.services.PODFileManager;
+import com.example.mrt.services.PODFileRepository;
 
 import java.util.ArrayList;
 
@@ -38,6 +36,7 @@ public class PODListViewModel extends ViewModel {
             @Override
             public void onUploadSuccess() {
                 currentPod.setUploadStatus(UploadStatus.SUCCESS);
+                PODFileRepository.deleteImageFile(currentPod.getImageFilePath());
                 podList.setValue(podList.getValue().remove(currentPod));
             }
 
@@ -47,6 +46,6 @@ public class PODListViewModel extends ViewModel {
                 podList.setValue(podList.getValue().update(currentPod));
             }
         };
-        PODFileManager.uploadImageFile(currentPod, imageUploadCb);
+        PODFileRepository.uploadImageFile(currentPod, imageUploadCb);
     }
 }

@@ -17,11 +17,13 @@ import java.util.ArrayList;
 class PODArrayAdapter extends ArrayAdapter<POD> {
     private final Context context;
     private final ArrayList<POD> values;
+    private RetryCallback retryCallback;
 
-    public PODArrayAdapter(Context context, ArrayList<POD> values) {
+    public PODArrayAdapter(Context context, ArrayList<POD> values, RetryCallback retryCallback) {
         super(context, R.layout.pod_list_item, values);
         this.context = context;
         this.values = values;
+        this.retryCallback = retryCallback;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -32,16 +34,22 @@ class PODArrayAdapter extends ArrayAdapter<POD> {
 
         TextView textView = rowView.findViewById(R.id.pod_lr_no);
         final View progessIndicator = rowView.findViewById(R.id.progress);
-        final View retyrIndicator = rowView.findViewById(R.id.retry);
+        final View retryIndicator = rowView.findViewById(R.id.retry);
         textView.setText(pod.getLrNo());
 
         if(uploadStatus == UploadStatus.IN_PROGRESS){
             progessIndicator.setVisibility(View.VISIBLE);
-            retyrIndicator.setVisibility(View.GONE);
+            retryIndicator.setVisibility(View.GONE);
         } else if(uploadStatus == UploadStatus.FAILURE){
             Toast.makeText(this.context, "Failed to upload " + pod.getLrNo(), Toast.LENGTH_LONG).show();
             progessIndicator.setVisibility(View.GONE);
-            retyrIndicator.setVisibility(View.VISIBLE);
+            retryIndicator.setVisibility(View.VISIBLE);
+            retryIndicator.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    retryCallback.retryUpload(pod);
+                }
+            });
         }
         return rowView;
     }

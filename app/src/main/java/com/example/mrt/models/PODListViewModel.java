@@ -24,6 +24,16 @@ public class PODListViewModel extends ViewModel {
     public void add(final POD currentPod) {
         currentPod.setUploadStatus(UploadStatus.IN_PROGRESS);
         podList.setValue(podList.getValue().add(currentPod));
+        upload(currentPod);
+    }
+
+    public void retryUpload(POD currentPod) {
+        currentPod.setUploadStatus(UploadStatus.IN_PROGRESS);
+        podList.setValue(podList.getValue().update(currentPod));
+        upload(currentPod);
+    }
+
+    private void upload(final POD currentPod) {
         ImageUploadCb imageUploadCb = new ImageUploadCb() {
             @Override
             public void onUploadSuccess() {

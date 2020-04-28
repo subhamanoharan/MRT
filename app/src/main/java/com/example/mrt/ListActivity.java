@@ -2,7 +2,6 @@ package com.example.mrt;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -21,7 +20,7 @@ import com.example.mrt.models.UploadStatus;
 import java.util.ArrayList;
 
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements RetryCallback{
     private PODListViewModel podViewModel;
     public static final int REQUEST_ADD_POD = 1;
 
@@ -32,7 +31,7 @@ public class ListActivity extends AppCompatActivity {
         podViewModel = ViewModelProviders.of(this).get(PODListViewModel.class);
 
         final ListView listView = findViewById(R.id.pod_list);
-        final ArrayAdapter<POD> adapter = new PODArrayAdapter(this, new ArrayList<POD>());
+        final ArrayAdapter<POD> adapter = new PODArrayAdapter(this, new ArrayList<POD>(), this);
         listView.setAdapter(adapter);
 
         Observer<PODList> observer = new Observer<PODList>() {
@@ -57,11 +56,16 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK &&  requestCode == REQUEST_ADD_POD) {
             final String lrNo = data.getStringExtra(CreatePODActivity.LR_NO_EXTRA);
             final String imageFilePath = data.getStringExtra(CreatePODActivity.IMAGE_FILE_PATH_EXTRA);
             final POD pod = new POD(imageFilePath, lrNo, UploadStatus.WAITING);
             podViewModel.add(pod);
         }
+    }
+
+    @Override
+    public void retryUpload(POD pod) {
+        podViewModel.retryUpload(pod);
     }
 }

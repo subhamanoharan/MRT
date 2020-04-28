@@ -62,6 +62,7 @@ public class CreatePODActivity extends AppCompatActivity {
     private void setupToolBar() {
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(R.string.add_pod);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }

@@ -5,4 +5,5 @@
     <string name="upload_failed">Upload failed!</string>
     <string name="upload_success">"Uploaded successfully!"</string>
     <string name="camera_capture_failure">Unable to take picture!</string>
+    <string name="add_pod">Add POD</string>
 </resources>

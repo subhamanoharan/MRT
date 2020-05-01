@@ -1,7 +1,6 @@
 package com.example.mrt;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import com.example.mrt.models.UploadStatus;
 
 import java.util.ArrayList;
 
-class PODArrayAdapter extends ArrayAdapter<POD> {
+public class PODArrayAdapter extends ArrayAdapter<POD> {
     private final Context context;
     private final ArrayList<POD> values;
     private RetryCallback retryCallback;

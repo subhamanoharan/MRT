@@ -2,6 +2,6 @@ package com.example.mrt;
 
 import com.example.mrt.models.POD;
 
-interface RetryCallback {
+public interface RetryCallback {
     void retryUpload(POD pod);
 }

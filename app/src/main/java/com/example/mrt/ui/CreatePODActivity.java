@@ -1,4 +1,4 @@
-package com.example.mrt;
+package com.example.mrt.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.example.mrt.R;
 import com.example.mrt.models.POD;
 import com.example.mrt.services.LRDetectorCallback;
 import com.example.mrt.services.LRNoDetectorAsyncTask;

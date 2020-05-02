@@ -1,4 +1,4 @@
-package com.example.mrt;
+package com.example.mrt.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.mrt.R;
 import com.example.mrt.models.POD;
-import com.example.mrt.models.PODListViewModel;
+import com.example.mrt.ui.adapters.ViewPagerAdapter;
+import com.example.mrt.ui.viewmodels.PODListViewModel;
 import com.example.mrt.models.UploadStatus;
-import com.example.mrt.ui.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 

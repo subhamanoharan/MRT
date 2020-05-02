@@ -1,4 +1,4 @@
-package com.example.mrt;
+package com.example.mrt.ui.adapters;
 
 import com.example.mrt.models.POD;
 

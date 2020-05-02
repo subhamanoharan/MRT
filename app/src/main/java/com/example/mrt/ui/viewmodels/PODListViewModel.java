@@ -1,4 +1,4 @@
-package com.example.mrt.models;
+package com.example.mrt.ui.viewmodels;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
@@ -6,6 +6,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mrt.models.POD;
+import com.example.mrt.models.PODList;
+import com.example.mrt.models.UploadStatus;
 import com.example.mrt.services.ImageUploadCb;
 import com.example.mrt.services.PODFileRepository;
 
@@ -68,6 +71,6 @@ public class PODListViewModel extends ViewModel {
     }
 
     public int getCount() {
-        return this.getPOD().getValue().pods.size();
+        return this.getPOD().getValue().getSize();
     }
 }

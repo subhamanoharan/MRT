@@ -6,15 +6,15 @@ import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.mrt.PODArrayAdapter;
-import com.example.mrt.RetryCallback;
 import com.example.mrt.models.POD;
 import com.example.mrt.models.PODList;
-import com.example.mrt.models.PODListViewModel;
+import com.example.mrt.ui.adapters.PODArrayAdapter;
+import com.example.mrt.ui.adapters.RetryCallback;
+import com.example.mrt.ui.viewmodels.PODListViewModel;
 
 import java.util.ArrayList;
 
-public class PODListFragment extends ListFragment implements RetryCallback{
+public class PODListFragment extends ListFragment implements RetryCallback {
     private PODListViewModel podListViewModel;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

@@ -7,7 +7,7 @@ import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.mrt.models.PODListViewModel;
+import com.example.mrt.ui.viewmodels.PODListViewModel;
 
 import java.util.ArrayList;
 

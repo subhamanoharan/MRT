@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class PODList {
     ArrayList<POD> pods;
 
-    PODList(ArrayList<POD> pods){
+    public PODList(ArrayList<POD> pods){
         this.pods = pods;
     }
 
@@ -17,13 +17,13 @@ public class PODList {
         return newList;
     }
 
-    PODList add(POD currentPod) {
+    public PODList add(POD currentPod) {
         ArrayList<POD> newList = this.deepCopy();
         newList.add(currentPod);
         return new PODList(newList);
     }
 
-    PODList remove (POD currentPod) {
+    public PODList remove (POD currentPod) {
         ArrayList<POD> newList = new ArrayList<>();
         for(POD p : pods) {
             if(currentPod.getImageFilePath() != p.getImageFilePath())
@@ -32,7 +32,7 @@ public class PODList {
         return new PODList(newList);
     }
 
-    PODList update (POD currentPod) {
+    public PODList update (POD currentPod) {
         ArrayList<POD> newList = new ArrayList<>();
         for(POD p : pods) {
             if(currentPod.getImageFilePath() == p.getImageFilePath())
@@ -45,5 +45,9 @@ public class PODList {
 
     public ArrayList<POD> getAll() {
         return deepCopy();
+    }
+
+    public int getSize() {
+        return pods.size();
     }
 }

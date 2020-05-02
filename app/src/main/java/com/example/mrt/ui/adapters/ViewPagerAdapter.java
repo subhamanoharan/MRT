@@ -1,9 +1,12 @@
-package com.example.mrt.ui;
+package com.example.mrt.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.mrt.ui.PODListFragment;
+import com.example.mrt.ui.PODSuccessListFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
     final int COUNT = 2;

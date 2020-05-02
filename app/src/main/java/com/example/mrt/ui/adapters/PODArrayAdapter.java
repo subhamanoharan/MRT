@@ -1,4 +1,4 @@
-package com.example.mrt;
+package com.example.mrt.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mrt.R;
 import com.example.mrt.models.POD;
 import com.example.mrt.models.UploadStatus;
 

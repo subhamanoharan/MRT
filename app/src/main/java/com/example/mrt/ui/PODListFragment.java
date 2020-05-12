@@ -1,7 +1,12 @@
 package com.example.mrt.ui;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -16,14 +21,19 @@ import java.util.ArrayList;
 
 public class PODListFragment extends ListFragment implements RetryCallback {
     private PODListViewModel podListViewModel;
+    private PODArrayAdapter podArrayAdapter;
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         podListViewModel = ViewModelProviders.of(requireActivity()).get(PODListViewModel.class);
-
-        final PODArrayAdapter podArrayAdapter = new PODArrayAdapter(getActivity(), new ArrayList<POD>(), this);
+        podArrayAdapter = new PODArrayAdapter(requireActivity(), new ArrayList<POD>(), this);
         setListAdapter(podArrayAdapter);
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Observer<PODList> observer = new Observer<PODList>() {
             @Override
             public void onChanged(PODList podList) {
@@ -32,7 +42,14 @@ public class PODListFragment extends ListFragment implements RetryCallback {
                 podArrayAdapter.notifyDataSetChanged();
             }
         };
-        podListViewModel.getPOD().observe(this, observer);
+        podListViewModel.getPOD().observe(getViewLifecycleOwner(), observer);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        podArrayAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -1,8 +1,9 @@
-package com.example.mrt.services;
+package com.example.mrt.repositories;
 
 import android.util.Log;
 
 import com.example.mrt.models.POD;
+import com.example.mrt.services.ImageUploadCb;
 import com.example.mrt.services.api.ImageUploadService;
 import com.example.mrt.services.api.ServiceGenerator;
 

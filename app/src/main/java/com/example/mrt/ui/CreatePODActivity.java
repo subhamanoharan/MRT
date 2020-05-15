@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,7 +19,7 @@ import com.example.mrt.R;
 import com.example.mrt.models.POD;
 import com.example.mrt.services.LRDetectorCallback;
 import com.example.mrt.services.LRNoDetectorAsyncTask;
-import com.example.mrt.services.PODFileRepository;
+import com.example.mrt.repositories.PODFileRepository;
 
 import java.io.File;
 

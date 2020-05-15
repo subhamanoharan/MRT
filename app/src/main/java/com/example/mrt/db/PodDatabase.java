@@ -15,8 +15,8 @@ public abstract class PodDatabase extends RoomDatabase {
     public abstract PodDao podDao();
 
     private static volatile PodDatabase INSTANCE;
-    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(2);
-    static PodDatabase getDatabase(final Context context) {
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(2);
+    public static PodDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (PodDatabase.class) {
                 if (INSTANCE == null) {

@@ -1,4 +1,4 @@
-package com.example.mrt.services;
+package com.example.mrt.repositories;
 
 public interface ImageUploadCb {
     void onUploadSuccess();

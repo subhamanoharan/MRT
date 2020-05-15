@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.mrt.models.POD;
-import com.example.mrt.models.PODList;
+import com.example.mrt.models.PodViewItemsList;
 import com.example.mrt.ui.adapters.PODArrayAdapter;
 import com.example.mrt.ui.adapters.RetryCallback;
 import com.example.mrt.ui.viewmodels.PODListViewModel;
@@ -34,9 +34,9 @@ public class PODListFragment extends ListFragment implements RetryCallback {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Observer<PODList> observer = new Observer<PODList>() {
+        Observer<PodViewItemsList> observer = new Observer<PodViewItemsList>() {
             @Override
-            public void onChanged(PODList podList) {
+            public void onChanged(PodViewItemsList podList) {
                 podArrayAdapter.clear();
                 podArrayAdapter.addAll(podList.getAll());
                 podArrayAdapter.notifyDataSetChanged();

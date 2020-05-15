@@ -2,10 +2,10 @@ package com.example.mrt.models;
 
 import java.util.ArrayList;
 
-public class PODList {
+public class PodViewItemsList {
     private ArrayList<POD> pods;
 
-    public PODList(ArrayList<POD> pods){
+    public PodViewItemsList(ArrayList<POD> pods){
         this.pods = pods;
     }
 

@@ -28,8 +28,13 @@ public class PodDbRepository {
         });
     }
 
-    public void remove(POD currentPod) {
-        podDao.delete(new LocalPOD(currentPod.getImageFilePath(), currentPod.getLrNo()));
+    public void remove(final POD currentPod) {
+        PodDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                podDao.delete(new LocalPOD(currentPod.getImageFilePath(), currentPod.getLrNo()));
+            }
+        });
     }
 
     public LiveData<List<LocalPOD>> getAll(){

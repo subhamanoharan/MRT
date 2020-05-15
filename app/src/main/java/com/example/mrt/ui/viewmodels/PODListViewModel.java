@@ -9,13 +9,13 @@ import androidx.lifecycle.Transformations;
 
 import com.example.mrt.repositories.PodRepository;
 import com.example.mrt.models.POD;
-import com.example.mrt.models.PODList;
+import com.example.mrt.models.PodViewItemsList;
 
 import java.util.ArrayList;
 
 public class PODListViewModel extends AndroidViewModel {
     private PodRepository podRepository;
-    private LiveData<PODList> podViewItems;
+    private LiveData<PodViewItemsList> podViewItems;
 
     private LiveData<ArrayList<String>> lrsUploaded;
 
@@ -23,9 +23,9 @@ public class PODListViewModel extends AndroidViewModel {
         super(application);
         podRepository = new PodRepository(application);
         podViewItems = podRepository.getPodViewItems();
-        lrsUploaded = Transformations.map(podRepository.getPodsUploaded(), new Function<PODList, ArrayList<String>>() {
+        lrsUploaded = Transformations.map(podRepository.getPodsUploaded(), new Function<PodViewItemsList, ArrayList<String>>() {
             @Override
-            public ArrayList<String> apply(PODList input) {
+            public ArrayList<String> apply(PodViewItemsList input) {
                 final ArrayList<POD> pods = input.getAll();
                 ArrayList<String> lrs = new ArrayList<>();
                 for (POD pod : pods) lrs.add(pod.getLrNo());
@@ -34,7 +34,7 @@ public class PODListViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<PODList> getPOD() {
+    public LiveData<PodViewItemsList> getPOD() {
         return podViewItems;
     }
 
@@ -51,7 +51,7 @@ public class PODListViewModel extends AndroidViewModel {
     }
 
     public int getCount() {
-        final PODList podList = this.getPOD().getValue();
-        return podList == null ? 0 : podList.getSize();
+        final PodViewItemsList podViewItemsList = this.getPOD().getValue();
+        return podViewItemsList == null ? 0 : podViewItemsList.getSize();
     }
 }

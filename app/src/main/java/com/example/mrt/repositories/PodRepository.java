@@ -2,26 +2,25 @@ package com.example.mrt.repositories;
 
 import android.app.Application;
 
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 
 import com.example.mrt.db.LocalPOD;
 import com.example.mrt.models.POD;
-import com.example.mrt.models.PodViewItemsList;
 import com.example.mrt.models.PodNetworkUploadStatus;
+import com.example.mrt.models.PodViewItemsList;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.mrt.models.UploadStatus.SUCCESS;
 
 public class PodRepository {
     private final PodDbRepository podDbRepository;
 
     private MediatorLiveData<PodViewItemsList> podViewItems = new MediatorLiveData<>();
+    private MutableLiveData<ArrayList<String>> uploadedLrs = new MutableLiveData<>();
+
     private PODNetworkRepository podNetworkRepository;
 
     public PodRepository(Application application) {
@@ -44,20 +43,8 @@ public class PodRepository {
         return podViewItems;
     }
 
-    public LiveData<PodViewItemsList> getPodsUploaded() {
-        return Transformations.map(podNetworkRepository.getUploadedFiles(), new Function<ArrayList<String>, PodViewItemsList>() {
-            @Override
-            public PodViewItemsList apply(ArrayList<String> filesUploaded) {
-                ArrayList<POD> podsUploaded = new ArrayList<>();
-                final PodViewItemsList currentPodViewItemsList = getPodViewItems().getValue();
-                final PodViewItemsList podViewItemsList = currentPodViewItemsList != null ? currentPodViewItemsList : new PodViewItemsList(new ArrayList<POD>());
-                for (POD p : podViewItemsList.getAll()) {
-                    if(filesUploaded.contains(p.getImageFilePath()))
-                        podsUploaded.add(new POD(p.getImageFilePath(), p.getLrNo(), SUCCESS));
-                }
-            return new PodViewItemsList(podsUploaded);
-            }
-        });
+    public LiveData<ArrayList<String>> getPodsUploaded() {
+        return uploadedLrs;
     }
 
     private void remove(POD currentPod) {
@@ -70,6 +57,7 @@ public class PodRepository {
             public void onUploadSuccess() {
                 PODFileRepository.deleteImageFile(currentPod.getImageFilePath());
                 remove(currentPod);
+                addToUploadedLrs(currentPod);
             }
 
             @Override
@@ -77,6 +65,13 @@ public class PodRepository {
             }
         };
         podNetworkRepository.uploadImageFile(currentPod, imageUploadCb);
+    }
+
+    private void addToUploadedLrs(POD pod) {
+        final ArrayList<String> value = uploadedLrs.getValue();
+        final ArrayList<String> lrsValue = value == null ? new ArrayList<String>() : value;
+        lrsValue.add(pod.getLrNo());
+        uploadedLrs.setValue(lrsValue);
     }
 
     private Observer<PodNetworkUploadStatus> getNetworkObserver() {

@@ -2,10 +2,7 @@ package com.example.mrt.repositories;
 
 import android.util.Log;
 
-import androidx.arch.core.util.Function;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import com.example.mrt.models.POD;
 import com.example.mrt.models.PodNetworkUploadStatus;
@@ -14,7 +11,6 @@ import com.example.mrt.services.api.ImageUploadService;
 import com.example.mrt.services.api.ServiceGenerator;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -53,15 +49,6 @@ class PODNetworkRepository {
 
     MutableLiveData<PodNetworkUploadStatus> getNetworkStatusMap() {
         return networkStatusMap;
-    }
-
-    LiveData<ArrayList<String>> getUploadedFiles() {
-        return Transformations.map(networkStatusMap, new Function<PodNetworkUploadStatus, ArrayList<String>>() {
-            @Override
-            public ArrayList<String> apply(PodNetworkUploadStatus input) {
-                return input.getFilesWith(UploadStatus.SUCCESS);
-            }
-        });
     }
 
     UploadStatus getStatus(String imageFilePath) {

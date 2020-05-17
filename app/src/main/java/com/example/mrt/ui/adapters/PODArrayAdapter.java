@@ -42,15 +42,21 @@ public class PODArrayAdapter extends ArrayAdapter<POD> {
             retryIndicator.setVisibility(View.GONE);
         } else if(uploadStatus == UploadStatus.FAILURE){
             Toast.makeText(this.context, "Failed to upload " + pod.getLrNo(), Toast.LENGTH_LONG).show();
-            progessIndicator.setVisibility(View.GONE);
-            retryIndicator.setVisibility(View.VISIBLE);
-            retryIndicator.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    retryCallback.retryUpload(pod);
-                }
-            });
+            showRetry(pod, progessIndicator, retryIndicator);
+        } else if(uploadStatus == UploadStatus.WAITING){
+            showRetry(pod, progessIndicator, retryIndicator);
         }
         return rowView;
+    }
+
+    private void showRetry(final POD pod, View progessIndicator, View retryIndicator) {
+        progessIndicator.setVisibility(View.GONE);
+        retryIndicator.setVisibility(View.VISIBLE);
+        retryIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            retryCallback.retryUpload(pod);
+            }
+        });
     }
 }

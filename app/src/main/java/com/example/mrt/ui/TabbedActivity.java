@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -35,6 +36,13 @@ public class TabbedActivity extends AppCompatActivity {
         podViewModel = ViewModelProviders.of(this).get(PODListViewModel.class);
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        Observer<POD> failureEventObserver = new Observer<POD>() {
+            @Override
+            public void onChanged(POD pod) {
+                Toast.makeText(TabbedActivity.this, "Failed to upload " + pod.getLrNo(), Toast.LENGTH_LONG).show();
+            }
+        };
+        podViewModel.getFailureEvent().observe(this, failureEventObserver);
     }
     @Override
     public void onBackPressed() {

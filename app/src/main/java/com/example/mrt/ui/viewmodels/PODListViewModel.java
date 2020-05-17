@@ -29,6 +29,11 @@ public class PODListViewModel extends AndroidViewModel {
         return podRepository.getPodsUploaded();
     }
 
+    public SingleLiveEvent<POD> getFailureEvent() {
+        return podRepository.getFailureEvent();
+    }
+
+
     public void add(final POD currentPod) {
         podRepository.add(currentPod);
     }

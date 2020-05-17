@@ -11,6 +11,7 @@ import com.example.mrt.db.LocalPOD;
 import com.example.mrt.models.POD;
 import com.example.mrt.models.PodNetworkUploadStatus;
 import com.example.mrt.models.PodViewItemsList;
+import com.example.mrt.ui.viewmodels.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class PodRepository {
 
     private MediatorLiveData<PodViewItemsList> podViewItems = new MediatorLiveData<>();
     private MutableLiveData<ArrayList<String>> uploadedLrs = new MutableLiveData<>();
+    private SingleLiveEvent<POD> failureEvent = new SingleLiveEvent<>();
 
     private PODNetworkRepository podNetworkRepository;
 
@@ -47,6 +49,10 @@ public class PodRepository {
         return uploadedLrs;
     }
 
+    public SingleLiveEvent<POD> getFailureEvent() {
+        return failureEvent;
+    }
+
     private void remove(POD currentPod) {
         podDbRepository.remove(currentPod);
     }
@@ -62,6 +68,7 @@ public class PodRepository {
 
             @Override
             public void onUploadFailure() {
+                failureEvent.setValue(currentPod);
             }
         };
         podNetworkRepository.uploadImageFile(currentPod, imageUploadCb);

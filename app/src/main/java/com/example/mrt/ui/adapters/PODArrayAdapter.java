@@ -41,7 +41,6 @@ public class PODArrayAdapter extends ArrayAdapter<POD> {
             progessIndicator.setVisibility(View.VISIBLE);
             retryIndicator.setVisibility(View.GONE);
         } else if(uploadStatus == UploadStatus.FAILURE){
-            Toast.makeText(this.context, "Failed to upload " + pod.getLrNo(), Toast.LENGTH_LONG).show();
             showRetry(pod, progessIndicator, retryIndicator);
         } else if(uploadStatus == UploadStatus.WAITING){
             showRetry(pod, progessIndicator, retryIndicator);
